@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vet Clinics WhatsApp Sender</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d2421;--mute:#6b736f;--line:#e4e0d8;--wa:#1f9d55;--wa2:#167a42;--done:#eef6f0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:28px 18px 60px}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--mute);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.msg{display:block;width:100%;min-height:110px;resize:vertical;border:1px solid var(--line);direction:rtl;text-align:right;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:16px;background:#f9f8f5;border-radius:10px;padding:14px;margin:8px 0 10px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.big{display:block;text-align:center;background:var(--wa);color:#fff;text-decoration:none;font-weight:700;font-size:18px;padding:18px;border-radius:12px}
+.big:hover{background:var(--wa2)}.big.off{background:#9aa39e;pointer-events:none}
+.next{color:var(--mute);text-align:center;margin-top:8px;font-size:14px}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin:12px 0 4px}.bar i{display:block;height:100%;background:var(--wa);width:0}
+button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 12px;cursor:pointer}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}
+li:last-child{border:0}li.d{background:var(--done)}
+li .n{flex:1}li .n b{display:block;font-weight:600}li .n span{color:var(--mute);font-size:13px}
+li a{color:var(--wa2);font-weight:600;text-decoration:none;white-space:nowrap}
+.tick{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:none;cursor:pointer}
+li.d .tick{background:var(--wa);border-color:var(--wa)}
+.note{font-size:13px;color:var(--mute)}
+</style></head><body><div class="wrap">
+<h1>Ask all clinics on WhatsApp</h1>
+<p class="sub">Tap the green button, press Send in WhatsApp, come back, tap again. It moves to the next clinic each time.</p>
+<div class="card"><div class="row" style="justify-content:space-between"><strong>Message</strong><span class="row"><button id="orig">Use original</button><button id="copy">Copy message</button></span></div>
+<textarea class="msg" id="msg" dir="auto"></textarea><div class="note">You can edit the message. Every link uses what is written here, and your edit is saved on this device.</div></div>
+<div class="card">
+<a class="big" id="go" target="_blank" rel="noopener">Start</a>
+<div class="next" id="nextname"></div>
+<div class="bar"><i id="fill"></i></div><div class="note" id="count"></div>
+</div>
+<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:6px"><strong>Clinics</strong><button id="reset">Reset progress</button></div>
+<p class="note" style="margin:0 0 6px">Tap a circle to mark a clinic done or not done. Clinics that share a number are combined into one chat.</p>
+<ul id="list"></ul></div>
+</div>
+<script>
+const DATA = {"msg": "مرحبا يعطيكم العافية، كنت حابة استفسر عن أسعار ال check up وال vaccines وال boarding للقطط", "list": [{"area": "1st Circle", "name": "Suzan Vet Clinic", "num": "962788118868"}, {"area": "5th Circle", "name": "Vets Corner Vet Clinic + Life Line Vet Clinic", "num": "962786660393"}, {"area": "4th circle", "name": "velvet clinic", "num": "962792911311"}, {"area": "7th Circle", "name": "Best Friends Vet Clinic", "num": "962788588067"}, {"area": "7th Circle", "name": "Pet Med Vet Clinic", "num": "962798165777"}, {"area": "7th Circle", "name": "Pet Care Vet Clinic", "num": "962777362008"}, {"area": "7th Circle", "name": "Vet Spot", "num": "962793093332"}, {"area": "Swefieh", "name": "Royal Vets", "num": "962789403031"}, {"area": "Swefieh/Abdoun/Dabouq", "name": "First Pet Vet Clinic + Alsaif For Animal Care", "num": "962798448724"}, {"area": "Swefieh", "name": "Pet Park", "num": "962786310631"}, {"area": "Swefieh", "name": "Vets For Pets", "num": "962791863656"}, {"area": "Um Uthina", "name": "Petopia Vet Clinic", "num": "962797613331"}, {"area": "Al Rabieh", "name": "Vida Vet Clinic + Hope Vet Clinic", "num": "962790133330"}, {"area": "Al Rabieh", "name": "Lili Vet Clinic", "num": "962788031153"}, {"area": "Al Rabieh", "name": "Pet Plus Vet Clinic", "num": "962777825295"}, {"area": "Al Shmeisani", "name": "Petway Clinic", "num": "962790027396"}, {"area": "Al Shmeisani", "name": "Dr. Paw Vet Clinic", "num": "962785796931"}, {"area": "Um Uthina", "name": "Animal wellness vet center", "num": "962782881117"}, {"area": "Al Rabieh", "name": "Bayti vet clinic", "num": "962776779037"}, {"area": "Abdoun", "name": "Pet Charm Vet Clinic", "num": "962799141460"}, {"area": "Abdoun/Waibdeh", "name": "Dogtopia Clinic", "num": "962798144492"}, {"area": "Al Yasmeen", "name": "One O One Vet Clinic", "num": "962791464506"}, {"area": "Al Yasmeen", "name": "Pets Club Vet Clinic", "num": "962799646256"}, {"area": "Marj Alhamam", "name": "Dr. Lucy Vet Clinic", "num": "962799007880"}, {"area": "Marj Alhamam", "name": "Rayan Vet Clinic", "num": "962799692752"}, {"area": "Marj Alhamam", "name": "Almarj Vet Clinic", "num": "962798280062"}, {"area": "Wadi Alsir", "name": "Healthy Pet Clinic", "num": "962777290031"}, {"area": "Wadi Alsir", "name": "Tendor Touch Vet Clinic", "num": "962781321036"}, {"area": "8th Circle", "name": "Vet Zone Vet Clinic", "num": "962799699988"}, {"area": "Khalda", "name": "Turquise Vet Clinic", "num": "962798060603"}, {"area": "Khalda", "name": "Yasmeen Mansour Vet Clinic", "num": "962787498605"}, {"area": "Khalda", "name": "True Vet Clinic", "num": "962795087277"}, {"area": "Khalda", "name": "Dr. Ghanam Vet Clinic", "num": "962798472207"}, {"area": "Khalda", "name": "Aleef Vet Cen", "num": "962776928920"}, {"area": "Khalda", "name": "Top Vet Clinic", "num": "962798937589"}, {"area": "Tla' Alali", "name": "Amazon Pet Clinic", "num": "962796939729"}, {"area": "Fuhais", "name": "Mercy Vet Clinic", "num": "962791406767"}, {"area": "Dabbouq", "name": "Dr. Vet Clinic", "num": "962799055449"}, {"area": "Makkah St.", "name": "Amman Vet Clinic", "num": "962785514145"}, {"area": "Abu Nsair", "name": "Petly", "num": "962797987373"}, {"area": "Dahiet Al Rasheid", "name": "Eagle Vet Clinic", "num": "962796101196"}, {"area": "Ein Albasha", "name": "Dr. Moh'D Aljundi Clinic", "num": "962789922202"}, {"area": "Shafa Badran", "name": "Alfaqeeh Vet Clinic", "num": "962788224803"}, {"area": "Jubiha", "name": "Animal House Vet Clinic", "num": "962788487222"}, {"area": "Uni. Str.", "name": "Alex Pet Clinic", "num": "962795555945"}, {"area": "Uni. Str.", "name": "Amity Pet Clinic", "num": "962791472599"}, {"area": "Al Nuzha", "name": "Pawsitive Clinic", "num": "962782015285"}, {"area": "Jabal Altaj", "name": "Albasmah Vet Clinic", "num": "962798776140"}, {"area": "North Marka", "name": "Raheem Pet Care Center", "num": "962791863499"}, {"area": "Tabarbour", "name": "Pet Heaven Vet Clinic", "num": "962775345237"}, {"area": "Tabarbour", "name": "Lovely Pets Clinic", "num": "962787746007"}]};
+const box = document.getElementById("msg");
+let text = DATA.msg;
+try { const s = localStorage.getItem("vetwa-msg"); if (s !== null) text = s; } catch(e) {}
+box.value = text;
+const link = n => "https://wa.me/" + n + "?text=" + encodeURIComponent(box.value);
+let done = {};
+try { done = JSON.parse(localStorage.getItem("vetwa-done") || "{}"); } catch(e) {}
+const save = () => { try { localStorage.setItem("vetwa-done", JSON.stringify(done)); } catch(e) {} };
+box.addEventListener("input", () => { try { localStorage.setItem("vetwa-msg", box.value); } catch(e) {} render(); });
+document.getElementById("orig").onclick = () => { box.value = DATA.msg; try { localStorage.removeItem("vetwa-msg"); } catch(e) {} render(); };
+const go = document.getElementById("go");
+function render(){
+  const L = DATA.list, nd = L.filter(x => done[x.num]).length;
+  const next = L.find(x => !done[x.num]);
+  document.getElementById("fill").style.width = (100*nd/L.length) + "%";
+  document.getElementById("count").textContent = nd + " of " + L.length + " sent";
+  if (next){ go.href = link(next.num); go.classList.remove("off");
+    go.textContent = nd ? "Open next chat (" + (nd+1) + " of " + L.length + ")" : "Start: open first chat";
+    document.getElementById("nextname").textContent = "Next: " + next.name + " (+" + next.num + ")";
+  } else { go.removeAttribute("href"); go.classList.add("off"); go.textContent = "All done";
+    document.getElementById("nextname").textContent = "Every clinic has been messaged."; }
+  const ul = document.getElementById("list"); ul.innerHTML = "";
+  L.forEach(x => {
+    const li = document.createElement("li"); if (done[x.num]) li.className = "d";
+    li.innerHTML = '<span class="tick" role="button" aria-label="Mark done"></span><div class="n"><b></b><span></span></div><a target="_blank" rel="noopener">Open</a>';
+    li.querySelector("b").textContent = x.name;
+    li.querySelector(".n span").textContent = (x.area ? x.area + " · " : "") + "+" + x.num;
+    const a = li.querySelector("a"); a.href = link(x.num);
+    a.onclick = () => setTimeout(() => { done[x.num] = 1; save(); render(); }, 300);
+    li.querySelector(".tick").onclick = () => { if (done[x.num]) delete done[x.num]; else done[x.num] = 1; save(); render(); };
+    ul.appendChild(li);
+  });
+}
+go.addEventListener("click", () => {
+  const next = DATA.list.find(x => !done[x.num]); if (!next) return;
+  setTimeout(() => { done[next.num] = 1; save(); render(); }, 300);
+});
+document.getElementById("reset").onclick = () => { done = {}; save(); render(); };
+document.getElementById("copy").onclick = async (e) => {
+  try { await navigator.clipboard.writeText(box.value); e.target.textContent = "Copied"; }
+  catch(err) { e.target.textContent = "Select the text to copy"; }
+};
+render();
+</script></body></html>
